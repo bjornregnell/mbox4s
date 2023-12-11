@@ -25,12 +25,12 @@ def mboxIterator(s: String) =
   MboxIterator.fromFile(s.toPath.toFile).charset(EncIso.charset()).build()
 
 def parseSingleBody(sb: SingleBody, charset: String): String = 
-  if charset.toLowerCase == "us-ascii" then "!!! STRANGE CHARACTERS DELETED"
+  if charset.toLowerCase == "us-ascii" then "!!! us-ascii CHARACTERS DELETED"
   else 
     val data = String(sb.getInputStream().readAllBytes(), Charset.forName(charset))
     val parsed = 
-      if data.trim.startsWith("<") 
-      then 
+      if data.trim.startsWith("%PDF") then "!!! PDF DOCUMENT SKIPPED"
+      else if data.trim.startsWith("<") then 
         org.jsoup.Jsoup.parse(data).wholeText()
           .split("\n")
           .map(_.stripTrailing)
